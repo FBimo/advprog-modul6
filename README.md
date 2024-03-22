@@ -108,4 +108,21 @@ let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
 ```
 
 Dengan ada refaktorisasi di atas, kode yang ada terlihat semakin ringkas, mudah dipahami, dan apabila kita perlu untuk memodifikasi sesuatu, kita tidak perlu lagi sampai memodifikasi dua kode yang identik. 
+
+## Commit 4 Reflection Notes
+
+```
+...
+let (status_line, filename) = match &request_line[..] {
+            "GET / HTTP/1.1" => ("HTTP/1.1 200 OK", "hello.html"),
+            "GET /sleep HTTP/1.1" => {
+                thread::sleep(Duration::from_secs(5));
+                ("HTTP/1.1 200 OK", "hello.html")
+            }
+           _ => ("HTTP/1.1 404 NOT FOUND", "404.html"),
+        };
+...
+```
+
+Modifikasi kode di atas berguna untuk melakukan tes terhadap kondisi server kita ketika menerapkan `sleep` sebelum melanjutkan _request_ lainnya. Pada contoh di atas durasi `sleep` atau waktu yang dibutuhkan server sebelum melakukan _request_ lainnya adalah lima detik. Tentu saja hal itu akan berdampak apabila terdapat beberapa pengguna yang akan melakukan _request_ secara beriringan. Pengguna harus menunggu setidaknya lima detik agar server bisa mengeksekusi _request_-nya. Hal ini terjadi karena kita sekarang memiliki tiga kondisi untuk ditangani sehingga diperlukan metode `match` yang berbeda dari metode `if-else` biasa. `match` tidak bisa melakukan _referencing_ atau _deferencing_ secara otomatis seperti metode _equality_.
 </details>
