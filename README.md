@@ -66,5 +66,46 @@ Berikut merupakan baris kode yang perlu ditambahkan di dalam fungsi `handle_conn
         stream.write_all(response.as_bytes()).unwrap();
 ...
 ```
+## Commit 3 Reflection Notes
 
+![Commit 3 screen capture](image-1.png)
+
+```
+...
+else {
+            let status_line = "HTTP/1.1 404 NOT FOUND";
+            let contents = fs::read_to_string("404.html").unwrap();
+            let length = contents.len();
+    
+            let response = format!(
+                "{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}"
+            );
+    
+            stream.write_all(response.as_bytes()).unwrap();
+    }
+...
+
+```
+
+Baris kode di atas ditambahkan untuk memunculkan halaman ketika suatu _file_ html yang di-_request_ tidak tersedia. Kode di atas dapat berjalan dengan baik sesuai dengan gambar yang tertera, namun kode di atas terdapat duplikasi penulisan kode yang dapat direfaktorisasi. Berikut merupakan hasil refaktorisasinya,
+
+```
+...
+let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
+            ("HTTP/1.1 200 OK", "hello.html")
+        } else {
+            ("HTTP/1.1 404 NOT FOUND", "404.html")
+        };
+    
+        let contents = fs::read_to_string(filename).unwrap();
+        let length = contents.len();
+    
+        let response =
+            format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
+    
+        stream.write_all(response.as_bytes()).unwrap();
+...
+```
+
+Dengan ada refaktorisasi di atas, kode yang ada terlihat semakin ringkas, mudah dipahami, dan apabila kita perlu untuk memodifikasi sesuatu, kita tidak perlu lagi sampai memodifikasi dua kode yang identik. 
 </details>
