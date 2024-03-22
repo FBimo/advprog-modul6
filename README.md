@@ -125,4 +125,23 @@ let (status_line, filename) = match &request_line[..] {
 ```
 
 Modifikasi kode di atas berguna untuk melakukan tes terhadap kondisi server kita ketika menerapkan `sleep` sebelum melanjutkan _request_ lainnya. Pada contoh di atas durasi `sleep` atau waktu yang dibutuhkan server sebelum melakukan _request_ lainnya adalah lima detik. Tentu saja hal itu akan berdampak apabila terdapat beberapa pengguna yang akan melakukan _request_ secara beriringan. Pengguna harus menunggu setidaknya lima detik agar server bisa mengeksekusi _request_-nya. Hal ini terjadi karena kita sekarang memiliki tiga kondisi untuk ditangani sehingga diperlukan metode `match` yang berbeda dari metode `if-else` biasa. `match` tidak bisa melakukan _referencing_ atau _deferencing_ secara otomatis seperti metode _equality_.
+
+## Commit 5 Reflection Notes
+
+_ThreadPool_ adalah mekanisme dalam pemrograman yang digunakan untuk mengeksekusi banyak tugas secara bersamaan dengan menggunakan kumpulan _thread_ yang telah dibuat sebelumnya. Berikut merupakan penjabaran singkat cara kerjanya,
+
+1. *Inisialisasi ThreadPool*: Pada awalnya, _ThreadPool_ dibuat dengan menentukan jumlah maksimum _thread_ yang ingin digunakan. Setiap _thread_ dalam _pool_ ini dapat digunakan untuk mengeksekusi tugas yang diberikan.
+
+2. *Penjadwalan Tugas*: Ketika tugas baru dikirim untuk dieksekusi ke _ThreadPool_, _ThreadPool_ akan menempatkan tugas tersebut dalam antrian tugas yang menunggu. Antrian ini mungkin bersifat FIFO (_First In, First Out_) atau menggunakan prioritas tertentu tergantung pada implementasinya.
+
+3. *Pengambilan Tugas*: Setiap _thread_ dalam _ThreadPool_ akan terus-menerus memeriksa antrian tugas yang menunggu. Ketika _thread_ tersedia, _thread_ mengambil tugas berikutnya dari antrian.
+
+4. *Eksekusi Tugas*: Setelah mengambil tugas dari antrian, _thread_ mulai mengeksekusi tugas tersebut. Eksekusi tugas bisa memakan waktu yang berbeda tergantung pada kompleksitasnya.
+
+5. *Pengembalian Hasil*: Setelah tugas selesai dieksekusi, hasilnya bisa dikembalikan ke pemanggil asli atau disimpan dalam suatu struktur data yang dapat diakses nanti.
+
+6. *Penghentian ThreadPool*: Setelah selesai mengeksekusi semua tugas, _ThreadPool_ bisa dihentikan dan semua _thread_-nya dihentikan dan dibersihkan.
+
+_ThreadPool_ sangat berguna dalam situasi ketika kita memiliki banyak tugas yang perlu dieksekusi secara bersamaan, seperti saat memproses _request_ HTTP dalam server web. Dengan menggunakan _ThreadPool_, kita dapat menghindari _overhead_ pembuatan dan penghancuran _thread_ yang terlalu sering sehingga meningkatkan efisiensi aplikasi dan kinerja secara keseluruhan.
+
 </details>
