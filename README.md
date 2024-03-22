@@ -41,4 +41,30 @@ println!("Request: {:#?}", http_request);
 ...
 ```
 Mencetak setiap baris yang sudah dikumpulkan yang berisi _request_ HTTP. Jadi secara singkat, fungsi ini akan membaca _request_ HTTP dari _stream_ TCP dan akan berhenti apabila bertemu dengan baris yang kosong. 
+
+## Commit 2 Reflection Notes
+
+![Commit 2 screen capture](image.png)
+
+Ada beberapa bagian kode yang ditambahkan untuk memunculkkan hasil yang diperoleh pada gambar di atas,
+- mendefinisikan status `"HTTP/1.1 200 OK"`
+- membaca konten dari `hello.html` dengan mengubahnya ke variabel _string_ `contents` menggunakan `fs::read_to_string("hello.html").unwrap()`
+- melakukan kalkulasi panjang dari `contents` dengan `contents.len()`
+- mengonstruksi _string_ respons HTTP termasuk di dalamnya ada status, panjang konten, dan konten dari `hello.html`
+- kode perlu juga menuliskan respons HTTP kembali ke TCP _stream_ menggunakan `stream.write_all(response.as_bytes()).unwrap()`.
+
+Berikut merupakan baris kode yang perlu ditambahkan di dalam fungsi `handle_connection`,
+
+```
+...
+ let status_line = "HTTP/1.1 200 OK";
+        let contents = fs::read_to_string("hello.html").unwrap();
+        let length = contents.len();
+
+        let response = format!("{status_line}\r\nContent-Length:
+        {length}\r\n\r\n{contents}");
+        stream.write_all(response.as_bytes()).unwrap();
+...
+```
+
 </details>
